@@ -1,0 +1,8 @@
+#字符串列表转字符串
+test_list=['1','2','3']
+test_str="".join(test_list)
+#数字转字符串
+num=[1,2,3,4]
+num_str="".join([str(num) for item in num])
+#字符串转列表
+test_list=list(test_str)
