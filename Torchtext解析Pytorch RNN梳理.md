@@ -259,7 +259,7 @@ class Model(nn.Module):
         # hidden的维度 (numlayers 1, batch_size, hidden_size 128)
         out = self.linear(hidden.view(batch_size, -1))
         return out
-        # out的维度 (batch_size, 5)
+        # out的维度 (batch_size, 5) #电影评论有5个类别输出
 ```
 
 ### 6.1 Embedding层维度
