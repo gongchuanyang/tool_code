@@ -549,7 +549,7 @@ for batch in prediction_dataloader:
         outputs = model(b_input_ids, token_type_ids=None,
                         attention_mask=b_input_mask)
 
-    logits = outputs[0]
+    logits = outputs[1]
 
     # Move logits and labels to CPU
     logits = logits.detach().cpu().numpy()
