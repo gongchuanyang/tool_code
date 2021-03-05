@@ -1,0 +1,101 @@
+from torch import nn
+import torch
+import numpy as np
+import pandas as pd
+import pickle, time
+import re, os, string, typing, gc, json
+import torch.nn.functional as F
+import spacy
+from sklearn.model_selection import train_test_split
+from collections import Counter
+nlp = spacy.load('en')
+from preprocess import *
+
+## Data preprocessing
+# load dataset json files
+
+train_data = load_json('./data/squad/train-v1.1.json')
+valid_data = load_json('./data/squad/dev-v1.1.json')
+
+# parse the json structure to return the data as a list of dictionaries
+
+train_list = parse_data(train_data)
+valid_list = parse_data(valid_data)
+
+
+# converting the lists into dataframes
+
+train_df = pd.DataFrame(train_list)
+valid_df = pd.DataFrame(valid_list)
+
+
+
+# get indices of outliers and drop them from the dataframe
+drop_ids_train = filter_large_examples(train_df)
+train_df.drop(list(drop_ids_train), inplace=True)
+
+
+drop_ids_valid = filter_large_examples(valid_df)
+valid_df.drop(list(drop_ids_valid), inplace=True)
+
+# gather text to build vocabularies
+
+vocab_text = gather_text_for_vocab([train_df, valid_df])
+print("Number of sentences in the dataset: ", len(vocab_text))
+
+# build word and character-level vocabularies
+
+word2idx, idx2word, word_vocab = build_word_vocab(vocab_text)
+print("----------------------------------")
+char2idx, char_vocab = build_char_vocab(vocab_text)
+
+
+# numericalize context and questions for training and validation set
+
+train_df['context_ids'] = train_df.context.apply(context_to_ids, word2idx=word2idx)
+valid_df['context_ids'] = valid_df.context.apply(context_to_ids, word2idx=word2idx)
+train_df['question_ids'] = train_df.question.apply(question_to_ids, word2idx=word2idx)
+valid_df['question_ids'] = valid_df.question.apply(question_to_ids, word2idx=word2idx)
+
+
+
+
+
+# get indices with tokenization errors and drop those indices
+
+train_err = get_error_indices(train_df, idx2word)
+valid_err = get_error_indices(valid_df, idx2word)
+
+train_df.drop(train_err, inplace=True)
+valid_df.drop(valid_err, inplace=True)
+
+
+
+len(train_df), len(valid_df)
+
+
+
+
+# get start and end positions of answers from the context
+# this is basically the label for training QA models
+
+train_label_idx = train_df.apply(index_answer, axis=1, idx2word=idx2word)#  axis=1沿着列计算
+valid_label_idx = valid_df.apply(index_answer, axis=1, idx2word=idx2word)
+
+train_df['label_idx'] = train_label_idx    #label中的索引在context中的位置
+valid_df['label_idx'] = valid_label_idx
+
+
+
+#Dump data to pickle files
+
+train_df.to_pickle('qanettrain.pkl')
+valid_df.to_pickle('qanetvalid.pkl')
+
+
+import pickle  #保存字典和列表
+with open('qanetw2id.pickle','wb') as handle:
+    pickle.dump(word2idx, handle)
+
+with open('qanetc2id.pickle','wb') as handle:
+    pickle.dump(char2idx, handle)
