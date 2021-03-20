@@ -1,0 +1,5 @@
+Linux 装不上en_core_web_sm 问题解决
+卸载spacy，重新安装spacy
+使用python3 -m spacy download en_core_web_sm 下载需要的具体的模型
+使用nlp = spacy.load("en_core_web_sm")加载模型
+最重要的是注意console的报错信息，上次出错找不到主要原因是忽略了preprocess.py中的spacy.load("en")没有改成spacy.load("en_core_web_sm")
