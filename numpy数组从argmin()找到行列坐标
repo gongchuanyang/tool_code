@@ -1,0 +1,8 @@
+   #whole_data的最小值的索引
+    whole_data_np=np.array(whole_data)
+
+
+    m,n=whole_data_np.shape
+    index=int(whole_data_np.argmin())
+    x=int(index/n)
+    y=index%n
