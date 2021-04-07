@@ -1,0 +1,7 @@
+import numpy as np
+data=np.array([[3,2,1],[0.5,0.8,0.2],[-2,-3,-1]])
+#先找到非负数的集合，然后在非负集合中找到最小值
+data_min=np.min(data[np.where(data>0)])
+#data_min: 0.2
+data_min_index=np.where(data==data_min)
+#(array([1], dtype=int64), array([2], dtype=int64))
