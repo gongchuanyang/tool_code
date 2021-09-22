@@ -1,0 +1,3 @@
+students = [('john', 'A', 15), ('jane', 'B', 12), ('dave', 'B', 10)]
+sorted(students, key=lambda s: s[2],reversed=True)
+[('dave', 'B', 10), ('jane', 'B', 12), ('john', 'A', 15)]
