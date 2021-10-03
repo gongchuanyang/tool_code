@@ -4,3 +4,26 @@ torch.cuda.set_device(id)
 方式二：
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
+
+上面两段代码已经过时了
+
+统一使用下面的代码，在命令行中设置GPU_id
+parser.add_argument("--encoder_gpu", default='1,2,3', type=str, help="device to place bert encoder.")
+parser.add_argument("--model_gpu", default='0', type=str, help="device to place model.")
+
+#Allocate Models on GPU
+encoder_gpus  = [int(i) for i in args.encoder_gpu.split(',')]
+model_gpu='cuda:{}'.format(args.model_gpu)
+#加载预训练模型
+encoder = BertModel.from_pretrained(args.bert_model)
+encoder.cuda(encoder_gpus[0])
+encoder = torch.nn.DataParallel(encoder, device_ids=encoder_gpus)
+encoder.eval()
+
+# Set Model
+model = GraphFusionNet(config=args)
+model.cuda(model_gpu)
+model.train()
+
+一般在命令行中使用CUDA_VISIBLE_DEVICES=0,1,2,3比较好
+CUDA_VISIBLE_DEVICES=0,1,2,3  python train.py --name="GCY_DFGN"  --q_update --q_attn --basicblock_trans --bfs_clf
