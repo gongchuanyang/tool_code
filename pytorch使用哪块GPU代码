@@ -27,3 +27,6 @@ model.train()
 
 一般在命令行中使用CUDA_VISIBLE_DEVICES=0,1,2,3比较好
 CUDA_VISIBLE_DEVICES=0,1,2,3  python train.py --name="GCY_DFGN"  --q_update --q_attn --basicblock_trans --bfs_clf
+
+
+上次CUDA error: an illegal memory access was encountered，解读方案是使用四块GPU同时训练
