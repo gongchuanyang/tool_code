@@ -1,0 +1,126 @@
+#检查版本
+torch.version.cuda   # Corresponding CUDA version
+torch.backends.cudnn.version()  # Corresponding cuDNN version
+torch.cuda.get_device_name(0)   # GPU type
+#固定随机种子
+torch.manual_seed(0)
+torch.cuda.manual_seed_all(0)
+
+
+#判断是否有CUDA支持
+torch.cuda.is_available()
+
+#有时Control-C中止运行后GPU存储没有及时释放，需要手动清空。在PyTorch内部可以
+torch.cuda.empty_cache()
+
+#命令行可以先使用ps找到程序的PID，再使用kill结束该进程
+ps aux | grep python
+kill -9 [pid]
+
+
+#直接重置没有被清空的GPU
+nvidia-smi --gpu-reset -i [gpu_id]
+
+
+
+
+#张量的基本信息
+tensor.size()
+tensor.type()
+tensor.dim()
+
+
+
+
+
+# torch.Tensor -> np.ndarray.
+ndarray = tensor.cpu().numpy()
+
+# np.ndarray -> torch.Tensor.
+tensor = torch.from_numpy(ndarray).float()
+tensor = torch.from_numpy(ndarray.copy()).float()  # If ndarray has negative stride
+
+#从只包含一个元素的张量中提取值
+value  = tensor.item()
+
+#矩阵乘法
+## Matrix multiplication: (m*n) * (n*p) -> (m*p).
+result = torch.mm(tensor1, tensor2)
+
+# Batch matrix multiplication: (b*m*n) * (b*n*p) -> (b*m*p).
+result = torch.bmm(tensor1, tensor2)
+
+# Element-wise multiplication.
+result = tensor1 * tensor2
+
+
+
+
+#torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=20)
+
+
+
+
+将在GPU保存的模型加载到CPU
+
+model.load_state_dict(torch.load('model,pth', map_location='cpu'))
+
+
+
+#微调全连接层
+import torch.nn as nn
+model = torchvision.models.resnet18(pretrained=True)
+for param in model.parameters():
+    param.requires_grad = False
+model.fc=nn.Linear(512,100)
+optimizer = torch.optim.SGD(model.fc.parameters(), lr=1e-2, momentum=0.9, weight_decay=1e-4)
+
+#以较大学习率微调全连接层，较小学习率微调卷积层
+model = torchvision.models.resnet18(pretrained=True)
+finetuned_parameters = list(map(id, model.fc.parameters()))
+conv_parameters = (p for p in model.parameters() if id(p) not in finetuned_parameters)
+parameters = [{'params': conv_parameters, 'lr': 1e-3}, 
+              {'params': model.fc.parameters()}]
+optimizer = torch.optim.SGD(parameters, lr=1e-2, momentum=0.9, weight_decay=1e-4)
+
+
+
+#训练基本框架
+for t in epoch(80):
+    for images, labels in tqdm.tqdm(train_loader, desc='Epoch %3d' % (t + 1)):
+        images, labels = images.cuda(), labels.cuda()
+        scores = model(images)
+        loss = loss_function(scores, labels)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+
+#L1正化
+l1_regularization = torch.nn.L1Loss(reduction='sum')
+loss = ...  # Standard cross-entropy loss
+for param in model.parameters():
+    loss += lambda_ * torch.sum(torch.abs(param))
+loss.backward()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
