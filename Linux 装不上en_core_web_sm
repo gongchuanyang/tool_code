@@ -9,10 +9,8 @@ Linux 装不上en_core_web_sm 问题解决
 可以用本地的机器进行数据处理，然后把生成的权重，放在服务器上，有的时候本机的包比较全
 
 参考文档https://pypi.org/project/spacy/2.3.7/
-spacy版本要适配en_core_web_sm的版本  
+spacy版本要适配en_core_web_sm的版本,download best-matching version of specific model for your spaCy installation
 解决问题：
-将spacy的版本从3.0降到2.3.7，并且安装对应的en_core_web_sm的版本，spacy版本超过3.0,会出现错误。
-download best-matching version of specific model for your spaCy installation
-
-
-
+将spacy的版本从3.0降到2.3.7，并且安装对应的en_core_web_sm的版本，spacy版本超过3.0,会出现下面错误
+[2021-12-16 16:39:09,471] [WARNING] [W108] The rule-based lemmatizer did not find POS annotation for the token 'gain'. Check that your pipeline includes components that assign token.pos, typically 'tagger'+'attribute_ruler' or 'morphologizer'.
+12/16/2021 16:39:09 - WARNING - spacy -   [W108] The rule-based lemmatizer did not find POS annotation for the token 'gain'. Check that your pipeline includes components that assign token.pos, typically 'tagger'+'attribute_ruler' or 'morphologizer'.
