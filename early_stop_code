@@ -152,3 +152,27 @@ model.load_state_dict(torch.load('{}.pkl'.format(best_epoch)))
 
 # Testing
 compute_test()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#https://github.com/Wangld5/BERT_pairwise_ranking/blob/master/train.py 早停代码
