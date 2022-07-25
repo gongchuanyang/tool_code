@@ -108,6 +108,10 @@ loss.backward()
 p_state_dict = torch.load(fn, map_location=model_utils.device())
 
 
+state_dict={}
+state_dict.update(p_state_dict) 
+
+
 
 
 
