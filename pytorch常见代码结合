@@ -104,6 +104,9 @@ for param in model.parameters():
 loss.backward()
 
 
+#加载*.pt权重
+p_state_dict = torch.load(fn, map_location=model_utils.device())
+
 
 
 
